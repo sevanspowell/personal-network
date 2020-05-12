@@ -18,13 +18,15 @@ in
 
   resources.ec2SecurityGroups.allow-cardano = {
     inherit region accessKeyId;
+    name = "allow-cardano";
     description = "Allow cardano port";
-    rules = [ { protocol = "tcp"; fromPort = "3001"; toPort = "3001"; sourceIp = "0.0.0.0/0"; } ];
+    rules = [ { protocol = "tcp"; fromPort = 3001; toPort = 3001; sourceIp = "0.0.0.0/0"; } ];
   };
 
   resources.ec2SecurityGroups.allow-ssh = {
     inherit region accessKeyId;
+    name = "allow-ssh";
     description = "Allow SSH";
-    rules = [ { protocol = "tcp"; fromPort = "22"; toPort = "22"; sourceIp = "0.0.0.0/0"; } ];
+    rules = [ { protocol = "tcp"; fromPort = 22; toPort = 22; sourceIp = "0.0.0.0/0"; } ];
   };
 }
