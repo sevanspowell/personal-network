@@ -2,10 +2,16 @@
 
 let
   sources = import ../../nix/sources.nix;
+
+  cardanoNodeProject = import sources.cardano-node {};
 in
 
 {
   networking.firewall.allowedTCPPorts = [ 22 3001 ];
+
+  environment.systemPackages = [
+    cardanoNodeProject.cardano-cli
+  ];
 
   imports = [
     "${sources.cardano-node}/nix/nixos"
