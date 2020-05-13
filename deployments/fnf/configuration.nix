@@ -5,7 +5,7 @@ let
 in
 
 {
-  networking.firewall.allowedTCPPorts = [ 22 8081 ];
+  networking.firewall.allowedTCPPorts = [ 22 3001 ];
 
   imports = [
     "${sources.cardano-node}/nix/nixos"
@@ -25,11 +25,23 @@ in
     topology =  builtins.toFile "topology.json" (builtins.toJSON {
       Producers = [
         {
-          addr = "127.0.0.1"; #"relay ip";
-          port = 8081;
+          addr = "127.0.0.1";
+          port = 3001;
           valency = 1;
         }
       ];
+      # Producers = [
+      #   {
+      #     addr = "relays-new.ff.dev.cardano.org";
+      #     port = 3001;
+      #     valency = 1;
+      #   }
+      #   {
+      #     addr = "127.0.0.1";
+      #     port = 3001;
+      #     valency = 1;
+      #   }
+      # ];
     });
     nodeConfig = config.services.cardano-node.environments.ff.nodeConfig // {
       hasPrometheus = [ "127.0.0.1" 12798 ];
