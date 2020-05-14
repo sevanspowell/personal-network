@@ -24,6 +24,26 @@ in
     "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
   ];
 
+  deployment.keys.cardano-kes = {
+    text = builtins.readFile /home/sam/cardano/example/node1/kes.skey;
+    permissions = "0440";
+    group = "cardano-node";
+  };
+  deployment.keys.cardano-vrf = {
+    text = builtins.readFile /home/sam/cardano/example/node1/vrf.skey;
+    permissions = "0440";
+    group = "cardano-node";
+  };
+  deployment.keys.cardano-opcert = {
+    text = builtins.readFile /home/sam/cardano/example/node1/cert;
+    permissions = "0440";
+    group = "cardano-node";
+  };
+
+  users.users.cardano-node = {
+    extraGroups = ["keys"];
+  };
+
   services.cardano-node = {
     enable = true;
     environment = "ff";
@@ -51,8 +71,8 @@ in
         ]
       ];
     };
-    # kesKey = "/var/run/keys/cardano-kes";
-    # vrfKey = "/var/run/keys/cardano-vrf";
-    # operationalCertificate = "/var/run/keys/cardano-opcert";
+    kesKey = "/run/keys/cardano-kes";
+    vrfKey = "/run/keys/cardano-vrf";
+    operationalCertificate = "/run/keys/cardano-opcert";
   };
 }
