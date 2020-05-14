@@ -33,11 +33,11 @@ block-producing node you want:
 ### Operational certificate
 
     cardano-cli shelley node issue-op-cert \
-    --hot-kes-verification-key-file example/node1/kes.vkey \
-    --cold-signing-key-file example/delegate-keys/delegate1.skey \
-    --operational-certificate-issue-counter example/delegate-keys/delegate-opcert1.counter \
-    --kes-period 0 \
-    --out-file example/node1/cert
+        --hot-kes-verification-key-file example/node1/kes.vkey \
+        --cold-signing-key-file example/delegate-keys/delegate1.skey \
+        --operational-certificate-issue-counter example/delegate-keys/delegate-opcert1.counter \
+        --kes-period 0 \
+        --out-file example/node1/cert
     
 ## Launching
 
