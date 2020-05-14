@@ -11,14 +11,15 @@ offline):
         --verification-key-file example/delegate-keys/delegate1.vkey \
         --signing-key-file example/delegate-keys/delegate1.skey \
         --operational-certificate-issue-counter example/delegate-keys/delegate-opcert1.counter
-        
+ 
 ## Hot keys
-### KES keys
 
-Create a directory to store our KES keys, repeat for each
+Create a directory to store our hot keys, repeat for each
 block-producing node you want:
 
     mkdir example/node1
+
+### KES keys
 
     cardano-cli shelley node key-gen-KES \
         --verification-key-file example/node1/kes.vkey \
@@ -39,7 +40,7 @@ block-producing node you want:
         --kes-period 0 \
         --out-file example/node1/cert
     
-## Launching
+## Launch
 
     cardano-node run \
         --config example/configuration.yaml \
