@@ -11,7 +11,12 @@ in
     deployment.ec2.instanceType = "t2.micro";
     deployment.ec2.keyPair = resources.ec2KeyPairs.fnf-key-pair;
 
-    deployment.ec2.securityGroups = [ "allow-ssh" "allow-cardano" ];
+    deployment.ec2.ebsInitialRootDiskSize = 24; # GB
+
+    deployment.ec2.securityGroups = [ "allow-ssh"
+                                      "allow-cardano" # TODO remove
+                                      "allow-cardano-metrics"
+                                    ];
 
     # TODO
     # deployment.ec2.associatePublicIpAddress = false;
@@ -24,7 +29,13 @@ in
     deployment.ec2.instanceType = "t2.micro";
     deployment.ec2.keyPair = resources.ec2KeyPairs.fnf-key-pair;
 
-    deployment.ec2.securityGroups = [ "allow-ssh" "allow-cardano" ];
+    deployment.ec2.ebsInitialRootDiskSize = 24; # GB
+
+    deployment.ec2.securityGroups = [ "allow-ssh"
+                                      "allow-cardano"
+                                      "allow-cardano-metrics"
+                                      "allow-prometheus"
+                                    ];
   };
 
   resources.ec2KeyPairs.fnf-key-pair = { inherit region accessKeyId; };
@@ -43,17 +54,17 @@ in
     rules = [ { protocol = "tcp"; fromPort = 22; toPort = 22; sourceIp = "0.0.0.0/0"; } ];
   };
 
-  # resources.ec2SecurityGroups.allow-relay = {
-  #   inherit region accessKeyId;
-  #   name = "allow-relay";
-  #   description = "Allow relay node";
-  #   rules = [ { protocol = "tcp"; fromPort = 8080; toPort = 8080; sourceIp = "0.0.0.0/0"; } ];
-  # };
+  resources.ec2SecurityGroups.allow-cardano-metrics = {
+    inherit region accessKeyId;
+    name = "allow-cardano-metrics";
+    description = "Allow cardano metrics";
+    rules = [ { protocol = "tcp"; fromPort = 12789; toPort = 12789; sourceIp = "0.0.0.0/0"; } ];
+  };
 
-  # resources.ec2SecurityGroups.allow-block-producers = {
-  #   inherit region accessKeyId;
-  #   name = "allow-block-producers";
-  #   description = "Allow block producer nodes";
-  #   rules = [ { protocol = "tcp"; fromPort = 8081; toPort = 8081; sourceIp = "0.0.0.0/0"; } ];
-  # };
+  resources.ec2SecurityGroups.allow-prometheus = {
+    inherit region accessKeyId;
+    name = "allow-prometheus";
+    description = "Allow prometheus";
+    rules = [ { protocol = "tcp"; fromPort = 9090; toPort = 9090; sourceIp = "0.0.0.0/0"; } ];
+  };
 }

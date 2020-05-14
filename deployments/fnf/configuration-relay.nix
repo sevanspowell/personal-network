@@ -5,7 +5,11 @@ let
 in
 
 {
-  networking.firewall.allowedTCPPorts = [ 22 3001 ];
+  networking.firewall.allowedTCPPorts = [ 22
+                                          3001  # cardano
+                                          12789 # cardano-metrics
+                                          9090 # prometheus
+                                        ];
 
   imports = [
     "${sources.cardano-node}/nix/nixos"
@@ -37,7 +41,7 @@ in
       ];
     });
     nodeConfig = config.services.cardano-node.environments.ff.nodeConfig // {
-      hasPrometheus = [ "127.0.0.1" 12798 ];
+      hasPrometheus = [ nodes.relay.config.networking.privateIPv4 12789 ];
       setupScribes = [{
         scKind = "JournalSK";
         scName = "cardano";
@@ -50,5 +54,25 @@ in
         ]
       ];
     };
+  };
+
+  services.prometheus = {
+    enable = true;
+    scrapeConfigs = [
+      {
+        job_name = "cardano-node";
+        scrape_interval = "10s";
+        static_configs = [
+          {
+            targets = [ "${nodes.node.config.networking.privateIPv4}:12789" ];
+            labels = { alias = "block-producer"; };
+          }
+          {
+            targets = [ "${nodes.relay.config.networking.privateIPv4}:12789" ];
+            labels = { alias = "relay"; };
+          }
+        ];
+      }
+    ];
   };
 }

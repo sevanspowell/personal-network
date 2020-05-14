@@ -7,7 +7,10 @@ let
 in
 
 {
-  networking.firewall.allowedTCPPorts = [ 22 3001 ];
+  networking.firewall.allowedTCPPorts = [ 22
+                                          3001  # cardano
+                                          12789 # prometheus
+                                        ];
 
   environment.systemPackages = [
     cardanoNodeProject.cardano-cli
@@ -58,7 +61,9 @@ in
       ];
     });
     nodeConfig = config.services.cardano-node.environments.ff.nodeConfig // {
-      hasPrometheus = [ "127.0.0.1" 12798 ];
+      hasPrometheus = [ nodes.node.config.networking.privateIPv4 # This is the address prometheus should accept connections on
+                        12789
+                      ];
       setupScribes = [{
         scKind = "JournalSK";
         scName = "cardano";
@@ -75,4 +80,5 @@ in
     vrfKey = "/run/keys/cardano-vrf";
     operationalCertificate = "/run/keys/cardano-opcert";
   };
+
 }
