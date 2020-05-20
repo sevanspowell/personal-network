@@ -7,10 +7,7 @@ let
 in
 
 {
-  networking.firewall.allowedTCPPorts = [ 22
-                                          3001  # cardano
-                                          12789 # prometheus
-                                        ];
+  networking.firewall.allowedTCPPorts = [ 22 ];
 
   environment.systemPackages = [
     cardanoNodeProject.cardano-cli
@@ -81,4 +78,9 @@ in
     operationalCertificate = "/run/keys/cardano-opcert";
   };
 
+  networking.firewall.extraCommands = ''
+    # Accept packets on these ports, as long as it's the relay
+    iptables --insert nixos-fw-log-refuse --jump ACCEPT --source ${nodes.relay.config.networking.privateIPv4} -p tcp --dport 12789
+    iptables --insert nixos-fw-log-refuse --jump ACCEPT --source ${nodes.relay.config.networking.privateIPv4} -p tcp --dport 3001
+  '';
 }
