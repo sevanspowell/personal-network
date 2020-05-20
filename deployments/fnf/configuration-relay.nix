@@ -2,6 +2,8 @@
 
 let
   sources = import ../../nix/sources.nix;
+
+  cardanoNodeProject = import sources.cardano-node {};
 in
 
 {
@@ -10,6 +12,10 @@ in
                                           12789 # cardano-metrics
                                           9090 # prometheus
                                         ];
+
+  environment.systemPackages = [
+    cardanoNodeProject.cardano-cli
+  ];
 
   imports = [
     "${sources.cardano-node}/nix/nixos"

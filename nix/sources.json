@@ -1,14 +1,14 @@
 {
     "cardano-node": {
-        "branch": "ff-environment",
+        "branch": "refs/tags/pioneer-3",
         "description": "The core component that is used to participate in a Cardano decentralised blockchain.",
         "homepage": "https://cardano.org",
         "owner": "input-output-hk",
         "repo": "cardano-node",
-        "rev": "9e5b179c959d257938d49db44e4a25130c8f85c2",
-        "sha256": "1r2l75ixsb5ppd168chcd974av85d5g4gmmsj5387q3hr9r1067d",
+        "rev": "522b4f4fb3bf1abcab28c905b70ff751cd71bde2",
+        "sha256": "10ppxdyll0vd0k4jb223md94594r9l03sqgjd59jh791rzvhwfrv",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/cardano-node/archive/9e5b179c959d257938d49db44e4a25130c8f85c2.tar.gz",
+        "url": "https://github.com/input-output-hk/cardano-node/archive/522b4f4fb3bf1abcab28c905b70ff751cd71bde2.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "niv": {
