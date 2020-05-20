@@ -8,9 +8,10 @@ in
 
 {
   networking.firewall.allowedTCPPorts = [ 22
+                                          3000  # grafana
                                           3001  # cardano
                                           12789 # cardano-metrics
-                                          9090 # prometheus
+                                          9090  # prometheus
                                         ];
 
   environment.systemPackages = [
@@ -80,5 +81,10 @@ in
         ];
       }
     ];
+  };
+
+  services.grafana = {
+    enable = true;
+    addr = "0.0.0.0";
   };
 }

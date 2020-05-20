@@ -13,9 +13,9 @@ in
 
     deployment.ec2.ebsInitialRootDiskSize = 24; # GB
 
-    deployment.ec2.securityGroups = [ "allow-ssh"
-                                      "allow-cardano" # TODO remove
-                                      "allow-cardano-metrics"
+    deployment.ec2.securityGroups = [ resources.ec2SecurityGroups.allow-ssh
+                                      resources.ec2SecurityGroups.allow-cardano
+                                      resources.ec2SecurityGroups.allow-cardano-metrics
                                     ];
 
     # TODO
@@ -31,10 +31,11 @@ in
 
     deployment.ec2.ebsInitialRootDiskSize = 24; # GB
 
-    deployment.ec2.securityGroups = [ "allow-ssh"
-                                      "allow-cardano"
-                                      "allow-cardano-metrics"
-                                      "allow-prometheus"
+    deployment.ec2.securityGroups = [ resources.ec2SecurityGroups.allow-ssh
+                                      resources.ec2SecurityGroups.allow-cardano
+                                      resources.ec2SecurityGroups.allow-cardano-metrics
+                                      resources.ec2SecurityGroups.allow-prometheus
+                                      resources.ec2SecurityGroups.allow-grafana
                                     ];
   };
 
