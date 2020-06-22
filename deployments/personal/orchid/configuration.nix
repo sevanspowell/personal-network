@@ -25,6 +25,7 @@ in
       ../home/gnupg
       ../home/xmobar
       ../home/xmonad
+      ../home/xresources
     ];
   };
 
