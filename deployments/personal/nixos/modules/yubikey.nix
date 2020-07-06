@@ -31,7 +31,7 @@
     gnupg.agent = {
       enable = true;
       enableSSHSupport = true;
-      pinentryFlavor = "curses";
+      pinentryFlavor = "gnome3";
     };
   };
 
@@ -63,6 +63,7 @@
   environment.systemPackages = with pkgs; [
     gnupg
     pinentry-curses
+    pinentry-gnome
     paperkey
     yubioath-desktop
     yubikey-manager
