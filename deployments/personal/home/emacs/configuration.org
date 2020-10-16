@@ -564,7 +564,7 @@ Activate org-mode src code highlighting:
 Point org at agenda files:
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-agenda-files '("~/Dropbox/org/"))
+  (setq org-agenda-files '("~/Dropbox/org/in/inbox.org"))
 #+END_SRC
 
 
@@ -572,16 +572,11 @@ Capture templates for: TODO tasks, Notes, appointments, phone calls,
 meetings, and org-protocol.
 #+BEGIN_SRC emacs-lisp
   (setq org-capture-templates
-    (quote (("t" "Todo" entry (file org-inbox-file)
-    "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-    ("n" "Note" entry (file org-inbox-file)
-    "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
-    ("m" "Meeting" entry (file org-inbox-file)
-    "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
-    ("p" "Phone call" entry (file org-inbox-file)
-    "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
-    ("h" "Habit" entry (file org-inbox-file)
-    "* TODO %?\n%U\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")
+    (quote (
+    ("n" "Note" entry (file+headline "~/Dropbox/org/in/inbox.org" "Notes")
+    "* %? \n%u\n")
+    ("b" "Bibliographic entry" entry (file+headline "~/Dropbox/org/in/inbox.org" "Bibliographic")
+    "* %? \n%u\n")
     ))
     )
   (setq org-global-properties (quote (("Effort_ALL" . "0:15 0:30 0:45 1:00 2:00 3:00 4:00 5:00 6:00 0:00")
@@ -619,6 +614,14 @@ Clocking
     (interactive)
     (save-excursion
       (message (format "This week's total: %s " (org-minutes-to-clocksum-string (org-clock-sum-thisweek))))))
+
+  (general-define-key
+    :prefix  ","
+    :states  'normal
+    "c"  '(:ignore t :which-key "capture")
+    "cc" 'org-capture
+    "ci" '((lambda () (interactive) (find-file "~/Dropbox/in/inbox.org")) :which-key "open-inbox")
+    )
 
   (general-define-key
     :prefix  ","
@@ -776,6 +779,12 @@ vterm:
   :config
   (setq vterm-kill-buffer-on-exit t)
 )
+(general-define-key
+  :states '(normal motion)
+  :keymaps 'vterm-mode-map
+  :prefix ","
+  "ESC" 'vterm-send-escape
+ )
 #+END_SRC
 
 ** Ledger
@@ -822,6 +831,15 @@ vterm:
   (use-package terraform-mode
     :ensure t
   )
+#+END_SRC
+
+** Crystal
+
+#+BEGIN_SRC emacs-lisp
+  (use-package crystal-mode
+    :ensure t
+  )
+
 #+END_SRC
 
 ** Contact

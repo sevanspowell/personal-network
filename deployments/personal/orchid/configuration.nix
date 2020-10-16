@@ -84,7 +84,6 @@ in
     rofi
     rxvt_unicode-with-plugins
     silver-searcher
-    stack
     spotify
     toxiproxy
     tlaplusToolbox
@@ -224,18 +223,23 @@ in
   nix.trustedUsers = ["root" "sam"];
   nix.sandboxPaths = ["/home/sam/.ssh"];
   nix.extraOptions = ''
-    plugin-files = ${pkgs.nix-plugins}/lib/nix/plugins/libnix-extra-builtins.so
+    # plugin-files = ${pkgs.nix-plugins}/lib/nix/plugins/libnix-extra-builtins.so
+    experimental-features = nix-command flakes ca-references
   '';
 
   nix.binaryCaches = [
+    "https://sevanspowell-personal.cachix.org"
     "https://cache.nixos.org"
     "https://iohk.cachix.org"
     "https://hydra.iohk.io"
+    # "https://mantis-ops.cachix.org"
   ];
   nix.binaryCachePublicKeys = [
+    "sevanspowell-personal.cachix.org-1:VOY8b19A+HGl1xUof+ucLFTDRCYBhjv+q94rxt5t5Bk="
     "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
     "iohk.cachix.org-1:DpRUyj7h7V830dp/i6Nti+NEO2/nhblbov/8MW7Rqoo="
     "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
+    # "mantis-ops.cachix.org-1:SornDcX8/9rFrpTjU+mAAb26sF8mUpnxgXNjmKGcglQ="
   ];
 
   nixpkgs.config.allowUnfree = true;
