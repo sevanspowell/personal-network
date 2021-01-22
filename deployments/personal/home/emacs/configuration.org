@@ -543,9 +543,11 @@ Disable menu, scroll bar:
 ** Theme
 #+BEGIN_SRC emacs-lisp
   (use-package doom-themes :ensure t)
-  (use-package nord-theme :ensure t)
 
   (when window-system (global-hl-line-mode t))
+  
+  (load-theme 'doom-rouge t)
+  (enable-theme 'doom-rouge)
 #+END_SRC
 
 ** Org mode
@@ -683,9 +685,6 @@ Load nix-managed emacs packages:
     :defer t
     :init
     (setq haskell-process-type 'cabal-new-repl)
-    (setq haskell-process-wrapper-function 'identity)
-    (setq lsp-haskell-process-wrapper-function 'identity)
-    (setq haskell-hoogle-server-command (lambda (port) (list "hoogle" "server" "--local" "-p" (number-to-string port))))
 
     (setq haskell-completing-read-function 'completing-read)
     (setq haskell-process-suggest-hoogle-imports t)
@@ -732,6 +731,7 @@ Load nix-managed emacs packages:
       :after haskell-mode
       :commands 'dante-mode
       :init
+      (setq dante-methods '(new-build bare-ghci))
       (add-hook 'haskell-mode-hook 'flycheck-mode)
       ;; OR:
       ;; (add-hook 'haskell-mode-hook 'flymake-mode)

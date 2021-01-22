@@ -1,7 +1,7 @@
-{ pkgs ? import ./nix {} }:
+{ pkgs ? import ../../nix {} }:
 
 let
-  sources = import ./nix/sources.nix;
+  sources = import ../../nix/sources.nix;
 
   cardanoNodeProject = import sources.cardano-node {};
 in

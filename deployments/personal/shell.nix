@@ -12,7 +12,7 @@ pkgs.mkShell {
     direnv
     nixops
     nix
-    niv
+    # niv
   ];
 
   NIX_PATH = "nixpkgs=${pkgs.path}";

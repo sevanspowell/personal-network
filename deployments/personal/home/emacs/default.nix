@@ -4,7 +4,7 @@ let
   emacsOverlay = import (builtins.fetchTarball {url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;});
   emacsLocal = pkgs.emacsWithPackagesFromUsePackage {
     config = builtins.readFile ./init.el;
-    extraEmacsPackages = epkgs: [ epkgs.emacs-libvterm epkgs.emacsql-sqlite ];
+    extraEmacsPackages = epkgs: [ epkgs.vterm epkgs.emacsql-sqlite ];
   };
 in
 
@@ -19,7 +19,7 @@ in
     enable = true;
     package = emacsLocal.overrideAttrs (oldAttrs: {
       buildCommand = oldAttrs.buildCommand + ''
-      ln -s $emacs/share/emacs $out/share/emacs
+      # ln -s $emacs/share/emacs $out/share/emacs
       '';
     });
   };

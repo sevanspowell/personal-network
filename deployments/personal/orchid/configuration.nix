@@ -16,6 +16,8 @@ in
       ../nixos/modules/keybase.nix
       ../nixos/modules/yubikey.nix
       "${sources.home-manager}/nixos"
+      # "${sources.cardano-node}/nix/nixos"
+      # "${sources.cardano-db-sync}/nix/nixos"
     ];
 
 
@@ -129,6 +131,67 @@ in
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
+  # cardano
+  # services.cardano-node = {
+  #     environment = "mainnet";
+  #     enable = true;
+  #     systemdSocketActivation = true;
+  # };
+  # services.cardano-db-sync = {
+  #   cluster = "mainnet";
+  #   enable = true;
+  #   socketPath = "/run/cardano-node/node.socket";
+  #   user = "cardano-node";
+  #   extended = true;
+  #   postgres = {
+  #     database = "cexplorer";
+  #   };
+  # };
+  services.postgresql = {
+    enable = true;
+    enableTCPIP = false;
+    settings = {
+      max_connections = 200;
+      shared_buffers = "2GB";
+      effective_cache_size = "6GB";
+      maintenance_work_mem = "512MB";
+      checkpoint_completion_target = 0.7;
+      wal_buffers = "16MB";
+      default_statistics_target = 100;
+      random_page_cost = 1.1;
+      effective_io_concurrency = 200;
+      work_mem = "10485kB";
+      min_wal_size = "1GB";
+      max_wal_size = "2GB";
+    };
+    identMap = ''
+      explorer-users /root cardano-node
+      explorer-users /postgres postgres
+      explorer-users /sam cardano-node
+      explorer-users /cardano-node cardano-node
+    '';
+    authentication = ''
+      local all all ident map=explorer-users
+      local all all trust
+    '';
+    ensureDatabases = [
+      "explorer_python_api"
+      "cexplorer"
+      "hdb_catalog"
+    ];
+    ensureUsers = [
+      {
+        name = "cardano-node";
+        ensurePermissions = {
+          "DATABASE explorer_python_api" = "ALL PRIVILEGES";
+          "DATABASE cexplorer" = "ALL PRIVILEGES";
+          "DATABASE hdb_catalog" = "ALL PRIVILEGES";
+          "ALL TABLES IN SCHEMA public" = "ALL PRIVILEGES";
+        };
+      }
+    ];
+  };
+
   virtualisation.docker.enable = true;
   virtualisation.docker.enableOnBoot = true;
 
@@ -176,6 +239,7 @@ in
       enable = true;
       enableContribAndExtras = true;
     };
+    #windowManager.windowmaker.enable = true;
   };
 
   # Enable touchpad support.
@@ -192,20 +256,7 @@ in
     };
   };
 
-  services.uwsgi = {
-    enable = true;
-    plugins = [ "python2" ];
-    instance = {
-      type = "emperor";
-      vassals = {
-        moin = {
-          type = "normal";
-          pythonPackages = self: with self; [ moinmoin ];
-          socket = "${config.services.uwsgi.runDir}/uwsgi.sock";
-        };
-      };
-    };
-  };
+  services.lorri.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.extraUsers.sam = {
