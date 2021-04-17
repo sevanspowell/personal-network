@@ -1,5 +1,7 @@
 { config, pkgs, lib, ... }:
 
+with lib;
+
 let
   cfg = config.hardware.yubikey-gpg;
 in
@@ -28,7 +30,7 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     programs = {
       ssh.startAgent = false;
       gnupg.agent = {
