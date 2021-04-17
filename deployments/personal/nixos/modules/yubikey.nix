@@ -84,8 +84,8 @@ in
     '';
 
     home-manager.users."${cfg.user}" = {...}: {
-      home.file.".gnupg/gpg.conf".text       = import ./yubikey/gpg.conf.nix { inherit pkgs; inherit (cfg) pinentryFlavor; };
-      home.file.".gnupg/gpg-agent.conf".text = import ./yubikey/gpg-agent.conf.nix {};
+      home.file.".gnupg/gpg.conf".text       = import ./yubikey/gpg.conf.nix {};
+      home.file.".gnupg/gpg-agent.conf".text = import ./yubikey/gpg-agent.conf.nix { inherit pkgs; inherit (cfg) pinentryFlavor; };
       home.file.".gnupg/scdaemon.conf".text  = import ./yubikey/scdaemon.conf.nix {};
     };
   };
