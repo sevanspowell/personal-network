@@ -68,7 +68,8 @@ export ZFS_SAFE="${ZFS_POOL}/safe"
 export ZFS_DS_HOME="${ZFS_SAFE}/home"
 export ZFS_DS_PERSIST="${ZFS_SAFE}/persist"
 
-export ZFS_BLANK_SNAPSHOT="${ZFS_DS_ROOT}@blank"
+export ZFS_BLANK_ROOT_SNAPSHOT="${ZFS_DS_ROOT}@blank"
+export ZFS_BLANK_HOME_SNAPSHOT="${ZFS_DS_HOME}@blank"
 
 ################################################################################
 
@@ -113,6 +114,8 @@ zpool create -f "$ZFS_POOL" "$DISK_PART_ROOT"
 info "Enabling compression for '$ZFS_POOL' ZFS pool ..."
 zfs set compression=on "$ZFS_POOL"
 
+# ---
+
 info "Creating '$ZFS_DS_ROOT' ZFS dataset ..."
 zfs create -p -o mountpoint=legacy "$ZFS_DS_ROOT"
 
@@ -122,11 +125,13 @@ zfs set xattr=sa "$ZFS_DS_ROOT"
 info "Configuring access control list setting for '$ZFS_DS_ROOT' ZFS dataset ..."
 zfs set acltype=posixacl "$ZFS_DS_ROOT"
 
-info "Creating '$ZFS_BLANK_SNAPSHOT' ZFS snapshot ..."
-zfs snapshot "$ZFS_BLANK_SNAPSHOT"
+info "Creating '$ZFS_BLANK_ROOT_SNAPSHOT' ZFS snapshot ..."
+zfs snapshot "$ZFS_BLANK_ROOT_SNAPSHOT"
 
 info "Mounting '$ZFS_DS_ROOT' to /mnt ..."
 mount -t zfs "$ZFS_DS_ROOT" /mnt
+
+# ---
 
 info "Mounting '$DISK_PART_BOOT' to /mnt/boot ..."
 mkdir /mnt/boot
@@ -142,12 +147,19 @@ info "Mounting '$ZFS_DS_NIX' to /mnt/nix ..."
 mkdir /mnt/nix
 mount -t zfs "$ZFS_DS_NIX" /mnt/nix
 
+# ---
+
 info "Creating '$ZFS_DS_HOME' ZFS dataset ..."
 zfs create -p -o mountpoint=legacy "$ZFS_DS_HOME"
+
+info "Creating '$ZFS_BLANK_HOME_SNAPSHOT' ZFS snapshot ..."
+zfs snapshot "$ZFS_BLANK_HOME_SNAPSHOT"
 
 info "Mounting '$ZFS_DS_HOME' to /mnt/home ..."
 mkdir /mnt/home
 mount -t zfs "$ZFS_DS_HOME" /mnt/home
+
+# ---
 
 info "Creating '$ZFS_DS_PERSIST' ZFS dataset ..."
 zfs create -p -o mountpoint=legacy "$ZFS_DS_PERSIST"
@@ -208,7 +220,8 @@ cat <<EOF > /mnt/persist/etc/nixos/configuration.nix
 
   # source: https://grahamc.com/blog/erase-your-darlings
   boot.initrd.postDeviceCommands = lib.mkAfter ''
-    zfs rollback -r ${ZFS_BLANK_SNAPSHOT}
+    zfs rollback -r ${ZFS_BLANK_ROOT_SNAPSHOT}
+    zfs rollback -r ${ZFS_BLANK_HOME_SNAPSHOT}
   '';
   boot.initrd.luks.devices = {
     root = { 
@@ -229,6 +242,8 @@ cat <<EOF > /mnt/persist/etc/nixos/configuration.nix
   environment.systemPackages = with pkgs;
     [
       emacs
+      vim
+      tree
     ];
 
   services.zfs = {
