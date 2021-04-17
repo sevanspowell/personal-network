@@ -23,7 +23,7 @@ in
     };
 
     user = mkOption {
-      type = lib.types.string;
+      type = lib.types.str;
       description = ''
         User to enable yubikey services for.
       '';
