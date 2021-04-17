@@ -18,6 +18,7 @@ in
         thus overrides the pinentry option in gpg-agent.conf in the user's
         home directory.
       '';
+    };
 
     user = mkOption {
       type = lib.types.string;
