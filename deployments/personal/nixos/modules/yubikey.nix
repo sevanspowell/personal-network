@@ -9,7 +9,15 @@ in
   options.hardware.yubikey-gpg = {
     enable = mkEnableOption "Enables yubikey GPG auth/enc/sign for a user.";
 
-    pinentryFlavor = options.programs.gnupg.agent.pinentryFlavor;
+    pinentryFlavor = mkOption {
+      type = types.nullOr (types.enum pkgs.pinentry.flavors);
+      example = "gnome3";
+      description = ''
+        Which pinentry interface to use. If not null, the path to the
+        pinentry binary will be passed to gpg-agent via commandline and
+        thus overrides the pinentry option in gpg-agent.conf in the user's
+        home directory.
+      '';
 
     user = mkOption {
       type = lib.types.string;
