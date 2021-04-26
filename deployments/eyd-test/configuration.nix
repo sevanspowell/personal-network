@@ -109,6 +109,7 @@ in
   ];
 
   home-manager.users.sam = {...}: {
+    home.file.".gitconfig".text = import ./.gitconfig.nix {};
   };
 
   # This value determines the NixOS release from which the default
