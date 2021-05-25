@@ -2,13 +2,20 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   sources = import ../nix/sources.nix;
+  # cardano-cli = (import sources.cardano-node {}).cardano-cli;
+
+  zsa-udev-rules = pkgs.callPackage ./zsa-udev-rules.nix {};
 in
 
 {
+  boot.initrd.luks.devices = { 
+    nixos-enc = { device = "/dev/disk/by-uuid/8cbcb189-ce25-460b-b980-d67ed7e7cc4c"; preLVM = true; };
+  };
+
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
@@ -24,12 +31,20 @@ in
   home-manager.users.sam = {...}: {
     imports = [
       ../home/emacs
-      ../home/gnupg
       ../home/xmobar
       ../home/xmonad
       ../home/xresources
     ];
   };
+
+  hardware.yubikey-gpg = {
+    enable = true;
+    pinentryFlavor = "gnome3";
+    user = "sam";
+  };
+
+  services.trezord.enable = true;
+  # systemd.services.trezord.serviceConfig.User = lib.mkForce "root";
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -37,6 +52,10 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "orchid"; # Define your hostname.
+
+  # hardware.keyboard.zsa.enable = true;
+  services.udev.packages = [ zsa-udev-rules pkgs.trezor-udev-rules ];
+  users.groups.plugdev = {};
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -92,6 +111,7 @@ in
     tree
     unzip
     vim
+    wally-cli
     wget 
     weechat
     xscreensaver
@@ -102,7 +122,7 @@ in
     hasktags
     hoogle
     xmobar
-  ]);
+  ]) ++ [];
 
   fonts.fonts = with pkgs; [
     fira-code
@@ -131,14 +151,13 @@ in
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
-  # cardano
   # services.cardano-node = {
-  #     environment = "mainnet";
+  #     environment = "testnet";
   #     enable = true;
   #     systemdSocketActivation = true;
   # };
   # services.cardano-db-sync = {
-  #   cluster = "mainnet";
+  #   cluster = "testnet";
   #   enable = true;
   #   socketPath = "/run/cardano-node/node.socket";
   #   user = "cardano-node";
@@ -190,6 +209,11 @@ in
         };
       }
     ];
+    initialScript = pkgs.writeText "init.sql" ''
+      CREATE USER sam WITH SUPERUSER;
+      CREATE USER root WITH SUPERUSER;
+      CREATE DATABASE sam WITH OWNER sam;
+    '';
   };
 
   virtualisation.docker.enable = true;
@@ -215,15 +239,15 @@ in
 
   # Enable wifi
   # networking.networkmanager.enable = true;
-  networking.wireless.enable = true;
-  networking.wireless.networks = {
-    "Aussie Broadband 4089" = {
-      pskRaw = "7ffdd238802cf375e7dd250e7137b4495d790cc2f14db762791eaf985a03af8f";
-    };
-    iiNetB25B7F = {
-      pskRaw = "7d7d98bf565e4fe7ff00a0f3188b172cb05b7f9c300ac79f22722b6e94a6ae49";
-    };
-  };
+  # networking.wireless.enable = true;
+  # networking.wireless.networks = {
+  #   "Aussie Broadband 4089" = {
+  #     pskRaw = "7ffdd238802cf375e7dd250e7137b4495d790cc2f14db762791eaf985a03af8f";
+  #   };
+  #   iiNetB25B7F = {
+  #     pskRaw = "7d7d98bf565e4fe7ff00a0f3188b172cb05b7f9c300ac79f22722b6e94a6ae49";
+  #   };
+  # };
 
   # Enable the X11 windowing system.
   services.xserver = {
@@ -261,7 +285,7 @@ in
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.extraUsers.sam = {
     createHome = true;
-    extraGroups = ["wheel" "video" "audio" "disk" "networkmanager" "docker" "libvirtd" "dialout"];
+    extraGroups = ["wheel" "video" "audio" "disk" "networkmanager" "docker" "libvirtd" "dialout" "plugdev" ];
     group = "users";
     home = "/home/sam";
     isNormalUser = true;

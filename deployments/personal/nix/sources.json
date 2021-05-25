@@ -1,28 +1,27 @@
 {
     "cardano-db-sync": {
-        "branch": "7.1.0",
+        "branch": "8.0.0",
         "description": "A component that follows the Cardano chain and stores blocks and transactions in PostgreSQL",
         "homepage": "",
         "owner": "input-output-hk",
         "repo": "cardano-db-sync",
-        "rev": "3cf868ec8c06265e4b670ac737af640d716e5ef7",
-        "sha256": "152yhay3riak41saz5s5zdhlkb5c5iqpy1gw1rvwjp6rwg1mc77n",
+        "rev": "1c7dbdac93e4d75118f1592dbb411f4f6a617128",
+        "sha256": "0wiqijrvahdn4w4mzdps22l85h9fb7dgmqq8p1alrmj4jb1hy3bb",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/cardano-db-sync/archive/3cf868ec8c06265e4b670ac737af640d716e5ef7.tar.gz",
+        "url": "https://github.com/input-output-hk/cardano-db-sync/archive/1c7dbdac93e4d75118f1592dbb411f4f6a617128.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "cardano-node": {
-        "branch": "1.24.2",
+        "branch": "1.26.0",
         "description": "The core component that is used to participate in a Cardano decentralised blockchain.",
         "homepage": "https://cardano.org",
         "owner": "input-output-hk",
         "repo": "cardano-node",
-        "rev": "400d18092ce604352cf36fe5f105b0d7c78be074",
-        "sha256": "19r4mamm9bxc1hz32qgsrfnrfxwp4pgnb4d28fzai3izznil03vi",
+        "rev": "1a25af8527f353fd0f2b863c27250b2990fec22a",
+        "sha256": "0yhykn7schy7z1yj2sfxi53k3lnk689y1wri6r8l5i2hmvc58mrq",
         "type": "tarball",
-        "url": "https://github.com/input-output-hk/cardano-node/archive/400d18092ce604352cf36fe5f105b0d7c78be074.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz",
-        "version": "1.24.2"
+        "url": "https://github.com/input-output-hk/cardano-node/archive/1a25af8527f353fd0f2b863c27250b2990fec22a.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "home-manager": {
         "branch": "release-20.09",
