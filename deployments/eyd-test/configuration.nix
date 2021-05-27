@@ -123,6 +123,7 @@ in
 
     # GNUPG
     "d /home/sam/.gnupg - sam users - -"
+    "L /home/sam/.gnupg/pubring.kbx - - - - /persist/home/sam/.gnupg/pubring.kbx"
     # gpg --recv 0x6504B986D4D056D4
     # export KEYID=0x6504B986D4D056D4
     # gpg --edit-key $KEYID
