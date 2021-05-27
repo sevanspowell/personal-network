@@ -22,7 +22,7 @@ in
   hardware.yubikey-gpg = {
     enable = true;
     user = "sam";
-    pinentryFlavor = "curses";
+    pinentryFlavor = "gnome3";
   };
 
   # Use the systemd-boot EFI boot loader.
@@ -55,6 +55,7 @@ in
       emacs
       vim
       rxvt_unicode-with-plugins
+      ripgrep
     ]) ++ (with pkgs.haskellPackages; [
       xmobar
     ]);
@@ -109,6 +110,23 @@ in
     "L /home/sam/.nix-profile - - - - /nix/var/nix/profiles/per-user/sam/profile"
     "d /home/sam/.nix-defexpr - sam users - -"
     "L /home/sam/.nix-defexpr/channels - - - - /nix/var/nix/profiles/per-user/sam/channels"
+
+    # Cache: emacs
+    "d /home/sam/.emacs.d - sam users - -"
+    "L /home/sam/.emacs.d/auto-save-list - - - - /persist/cache/home/sam/.emacs.d/auto-save-list"
+    "L /home/sam/.emacs.d/backups - - - - /persist/cache/home/sam/.emacs.d/backups"
+    "L /home/sam/.emacs.d/elpa - - - - /persist/cache/home/sam/.emacs.d/elpa"
+    "L /home/sam/.emacs.d/projectile-bookmarks.eld - - - - /persist/cache/home/sam/.emacs.d/projectile-bookmarks.eld"
+    "L /home/sam/.emacs.d/quelpa - - - - /persist/cache/home/sam/.emacs.d/quelpa"
+    "L /home/sam/.emacs.d/recentf - - - - /persist/cache/home/sam/.emacs.d/recentf"
+    "L /home/sam/.emacs.d/transient - - - - /persist/cache/home/sam/.emacs.d/transient"
+
+    # GNUPG
+    "d /home/sam/.gnupg - sam users - -"
+    # gpg --recv 0x6504B986D4D056D4
+    # export KEYID=0x6504B986D4D056D4
+    # gpg --edit-key $KEYID
+      # > trust
   ];
 
   home-manager.users.sam = {...}: {
