@@ -5,7 +5,7 @@ let
   homeManagerLib = import "${sources.home-manager}/modules/lib/stdlib-extended.nix" pkgs.lib;
 in
 {
-  # test
+  # test 2
   imports =
     [ 
       ./hardware-configuration.nix
