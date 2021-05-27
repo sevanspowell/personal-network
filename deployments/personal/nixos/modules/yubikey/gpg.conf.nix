@@ -50,7 +50,7 @@
   #trusted-key 0xFF3E7D88647EBCDB
   # Keyserver URL
   #keyserver hkps://keys.openpgp.org
-  #keyserver hkps://keyserver.ubuntu.com:443
+  keyserver hkps://keyserver.ubuntu.com:443
   #keyserver hkps://hkps.pool.sks-keyservers.net
   #keyserver hkps://pgp.ocf.berkeley.edu
   # Proxy to use for keyservers

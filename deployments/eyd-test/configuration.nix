@@ -50,11 +50,14 @@ in
   networking.hostId = "fd7a20bd";
   networking.networkmanager.enable = true;
 
-  environment.systemPackages = with pkgs;
+  environment.systemPackages = (with pkgs;
     [
       emacs
       vim
-    ];
+      rxvt_unicode-with-plugins
+    ]) ++ (with pkgs.haskellPackages; [
+      xmobar
+    ]);
 
   services.zfs = {
     autoScrub.enable = true;
@@ -109,7 +112,28 @@ in
   ];
 
   home-manager.users.sam = {...}: {
+    imports = [
+      ../personal/home/emacs
+      ../personal/home/xmobar
+      ../personal/home/xmonad
+      ../personal/home/xresources
+    ];
     home.file.".gitconfig".text = import ./.gitconfig.nix {};
+  };
+
+  services.xserver = {
+    enable = true;
+    layout = "us";
+    desktopManager.xterm.enable = false;
+    xkbOptions = "ctrl:nocaps";
+    videoDrivers = ["nvidia"];
+   
+    displayManager.defaultSession = "none+xmonad";
+
+    windowManager.xmonad = {
+      enable = true;
+      enableContribAndExtras = true;
+    };
   };
 
   # This value determines the NixOS release from which the default
