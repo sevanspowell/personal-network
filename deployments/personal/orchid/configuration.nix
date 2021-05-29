@@ -44,7 +44,6 @@ in
   };
 
   services.trezord.enable = true;
-  # systemd.services.trezord.serviceConfig.User = lib.mkForce "root";
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -54,7 +53,7 @@ in
   networking.hostName = "orchid"; # Define your hostname.
 
   # hardware.keyboard.zsa.enable = true;
-  services.udev.packages = [ zsa-udev-rules pkgs.trezor-udev-rules ];
+  services.udev.packages = [ zsa-udev-rules ];
   users.groups.plugdev = {};
 
   # Configure network proxy if necessary
