@@ -5,7 +5,6 @@ let
   homeManagerLib = import "${sources.home-manager}/modules/lib/stdlib-extended.nix" pkgs.lib;
 in
 {
-  # test 2
   imports =
     [ 
       ./hardware-configuration.nix
@@ -48,15 +47,13 @@ in
   # source: https://grahamc.com/blog/nixos-on-zfs
   boot.kernelParams = [ "elevator=none" ];
 
-  networking.hostId = "fd7a20bd";
-  networking.networkmanager.enable = true;
-
   environment.systemPackages = (with pkgs;
     [
       emacs
       vim
       rxvt_unicode-with-plugins
       ripgrep
+      wireguard
     ]) ++ (with pkgs.haskellPackages; [
       xmobar
     ]);
@@ -129,7 +126,10 @@ in
     # gpg --recv 0x6504B986D4D056D4
     # export KEYID=0x6504B986D4D056D4
     # gpg --edit-key $KEYID
-      # > trust
+    # > trust
+
+    # Wireguard
+    "L /etc/wg0 - - - - /persist/etc/wg0"
   ];
 
   home-manager.users.sam = {...}: {
@@ -164,5 +164,33 @@ in
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "20.03"; # Did you read the comment?
+
+  networking.hostId = "fd7a20bd";
+  networking.networkmanager.enable = true;
+
+  # networking.nat.enable = true;
+  # networking.nat.externalInterface = "eth0";
+  # networking.nat.internalInterfaces = "wg0";
+  networking.firewall = {
+    allowedUDPPorts = [ config.networking.wireguard.interfaces.wg0.listenPort ];
+  };
+
+  networking.wireguard.interfaces = {
+    wg0 = {
+      ips = [ "10.0.0.2/24" ];
+      listenPort = 51820;
+
+      privateKeyFile = "/etc/wg0/private";
+
+      peers = [
+        { # Host
+          publicKey = "EtunOhlwxPUwBpXeU39T6YW6YS+Nmv6Eemr2ZQXv61M=";
+          allowedIPs = [ "10.0.0.1/32" ];
+          persistentKeepalive = 25;
+          endpoint = "192.168.1.53:51820";
+        };
+      ];
+    };
+  };
 
 }
