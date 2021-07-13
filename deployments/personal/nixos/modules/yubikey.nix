@@ -68,11 +68,11 @@ in
     environment.systemPackages = with pkgs; [
       gnupg
       pkgs.pinentry."${cfg.pinentryFlavor}"
-      paperkey
+      # paperkey
       yubioath-desktop
       yubikey-manager
       ccid
-      gpgme.dev
+      # gpgme.dev
     ];
   
     services.dbus.enable = true;

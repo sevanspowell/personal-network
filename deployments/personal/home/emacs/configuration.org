@@ -255,9 +255,19 @@ Bootstrap
     :config
     (which-key-mode 1)
     )
-  (use-package evil :ensure t
+  (use-package evil
+    :ensure t
+    :init
+    (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
+    (setq evil-want-keybinding nil)
     :config
     (evil-mode 1)
+    )
+  (use-package evil-collection
+    :after evil
+    :ensure t
+    :config
+    (evil-collection-init)
     )
   (use-package evil-surround
     :ensure t
@@ -680,7 +690,14 @@ Load nix-managed emacs packages:
 
 ** Haskell
 #+BEGIN_SRC emacs-lisp
-  (use-package lsp-haskell :ensure t)
+  (use-package lsp-mode
+    :hook ((haskell-mode . lsp-deferred)
+           (lsp-mode . lsp-enable-which-key-integration))
+    :commands lsp)
+  (use-package lsp-ui :commands lsp-ui-mode)
+  (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+  (use-package lsp-treemacs :commands lsp-treemacs-error-list)
+
   (use-package haskell-mode
     :ensure t
     :defer t
@@ -727,24 +744,24 @@ Load nix-managed emacs packages:
       )
     (setq tags-revert-without-query 1)
 
-    (use-package dante
-      :ensure t
-      :after haskell-mode
-      :commands 'dante-mode
-      :init
-      (setq dante-methods '(new-build bare-ghci))
-      (setq dante-repl-command-line '("nix-shell" "--pure" "--run" (concat "cabal repl " (or dante-target (dante-package-name) "") " --builddir=dist/dante")))
-      (add-hook 'haskell-mode-hook 'flycheck-mode)
-      ;; OR:
-      ;; (add-hook 'haskell-mode-hook 'flymake-mode)
-      (add-hook 'haskell-mode-hook 'dante-mode)
-      (add-hook 'dante-mode-hook
-         '(lambda () (flycheck-add-next-checker 'haskell-dante
-                      '(warning . haskell-hlint))))
-      )
+    ;; (use-package dante
+    ;;   :ensure t
+    ;;   :after haskell-mode
+    ;;   :commands 'dante-mode
+    ;;   :init
+    ;;   (setq dante-methods '(new-build bare-ghci))
+    ;;   (setq dante-repl-command-line '("nix-shell" "--pure" "--run" (concat "cabal repl " (or dante-target (dante-package-name) "") " --builddir=dist/dante")))
+    ;;   (add-hook 'haskell-mode-hook 'flycheck-mode)
+    ;;   ;; OR:
+    ;;   ;; (add-hook 'haskell-mode-hook 'flymake-mode)
+    ;;   (add-hook 'haskell-mode-hook 'dante-mode)
+    ;;   (add-hook 'dante-mode-hook
+    ;;      '(lambda () (flycheck-add-next-checker 'haskell-dante
+    ;;                   '(warning . haskell-hlint))))
+    ;;   )
 
-    (use-package nix-haskell-mode
-      :hook (haskell-mode . nix-haskell-mode))
+    ;; (use-package nix-haskell-mode
+    ;;   :hook (haskell-mode . nix-haskell-mode))
 #+END_SRC
 
 ** Elisp
@@ -784,6 +801,7 @@ vterm:
   :ensure t
   :config
   (setq vterm-kill-buffer-on-exit t)
+  (setq vterm-max-scrollback 10000)
 )
 (general-define-key
   :states '(normal motion)

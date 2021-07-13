@@ -6,7 +6,7 @@
 
 let
   sources = import ../nix/sources.nix;
-  # cardano-cli = (import sources.cardano-node {}).cardano-cli;
+  cardano-cli = (import sources.cardano-node {}).cardano-cli;
 
   zsa-udev-rules = pkgs.callPackage ./zsa-udev-rules.nix {};
 in
@@ -21,10 +21,12 @@ in
       ./hardware-configuration.nix
       ../nixos/modules/direnv.nix
       ../nixos/modules/keybase.nix
-      ../nixos/modules/yubikey.nix
+      # ../nixos/modules/yubikey.nix
+      # ../../../../network/modules/yubikey-gpg/persist.nix
+      ../../../../network/modules/yubikey-gpg
       "${sources.home-manager}/nixos"
-      # "${sources.cardano-node}/nix/nixos"
-      # "${sources.cardano-db-sync}/nix/nixos"
+      "${sources.cardano-node}/nix/nixos"
+      "${sources.cardano-db-sync}/nix/nixos"
     ];
 
 
@@ -39,9 +41,18 @@ in
 
   hardware.yubikey-gpg = {
     enable = true;
-    pinentryFlavor = "gnome3";
-    user = "sam";
+
+    users = {
+      sam.pinentryFlavor = "gnome3";
+      root.pinentryFlavor = "curses";
+    };
   };
+
+  # hardware.yubikey-gpg = {
+  #   enable = true;
+  #   pinentryFlavor = "gnome3";
+  #   user = "sam";
+  # };
 
   services.trezord.enable = true;
 
@@ -76,6 +87,7 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = (with pkgs; [
+    cardano-cli
     cabal-install
     cabal2nix
     chromium
@@ -113,6 +125,7 @@ in
     wally-cli
     wget 
     weechat
+    wireguard
     xscreensaver
     zathura
   ]) ++ 
@@ -150,21 +163,21 @@ in
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
-  # services.cardano-node = {
-  #     environment = "testnet";
-  #     enable = true;
-  #     systemdSocketActivation = true;
-  # };
-  # services.cardano-db-sync = {
-  #   cluster = "testnet";
-  #   enable = true;
-  #   socketPath = "/run/cardano-node/node.socket";
-  #   user = "cardano-node";
-  #   extended = true;
-  #   postgres = {
-  #     database = "cexplorer";
-  #   };
-  # };
+  services.cardano-node = {
+      environment = "testnet";
+      enable = true;
+      systemdSocketActivation = true;
+  };
+  services.cardano-db-sync = {
+    cluster = "testnet";
+    enable = true;
+    socketPath = "/run/cardano-node/node.socket";
+    user = "cardano-node";
+    extended = true;
+    postgres = {
+      database = "cexplorer";
+    };
+  };
   services.postgresql = {
     enable = true;
     enableTCPIP = false;
@@ -327,4 +340,27 @@ in
   services.logind.extraConfig = ''
     RuntimeDirectorySize=8G
   '';
+
+  # networking.nat.internalInterfaces = "wg0";
+  networking.firewall = {
+    allowedUDPPorts = [ config.networking.wireguard.interfaces.wg0.listenPort ];
+  };
+
+  networking.wireguard.interfaces = {
+    wg0 = {
+      ips = [ "10.0.0.1/24" ];
+      listenPort = 51820;
+
+      privateKeyFile = "/etc/wg0/private";
+
+      peers = [
+        { # EYD VM
+          publicKey = "7X0oyS0bWJDxbXpo1PqA4o5GPYJiKDxmLb9AsZriREU=";
+          allowedIPs = [ "10.0.0.2/32" ];
+          persistentKeepalive = 25;
+          endpoint = "192.168.56.224:51820";
+        }
+      ];
+    };
+  };
 }
