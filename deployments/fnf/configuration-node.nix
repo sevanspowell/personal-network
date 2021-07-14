@@ -25,28 +25,28 @@ in
   ];
 
   deployment.keys.cardano-kes = {
-    text = builtins.readFile /home/sam/cardano/example/node1/kes.skey;
+    text = builtins.readFile ./keys/node1/kes.skey;
     permissions = "0440";
     group = "cardano-node";
   };
   deployment.keys.cardano-vrf = {
-    text = builtins.readFile /home/sam/cardano/example/node1/vrf.skey;
+    text = builtins.readFile ./keys/node1/vrf.skey;
     permissions = "0440";
     group = "cardano-node";
   };
   deployment.keys.cardano-opcert = {
-    text = builtins.readFile /home/sam/cardano/example/node1/cert;
+    text = builtins.readFile ./keys/node1/cert;
     permissions = "0440";
     group = "cardano-node";
   };
 
-  users.users.cardano-node = {
-    extraGroups = ["keys"];
-  };
+  # users.users.cardano-node = {
+  #   extraGroups = ["keys"];
+  # };
 
   services.cardano-node = {
     enable = true;
-    environment = "ff";
+    environment = "shelley_testnet";
     hostAddr = "0.0.0.0";
     topology =  builtins.toFile "topology.json" (builtins.toJSON {
       Producers = [
@@ -57,7 +57,7 @@ in
         }
       ];
     });
-    nodeConfig = config.services.cardano-node.environments.ff.nodeConfig // {
+    nodeConfig = config.services.cardano-node.environments.shelley_testnet.nodeConfig // {
       hasPrometheus = [ nodes.node.config.networking.privateIPv4 # This is the address prometheus should accept connections on
                         12789
                       ];
@@ -80,7 +80,9 @@ in
 
   networking.firewall.extraCommands = ''
     # Accept packets on these ports, as long as it's the relay
+    # cardano-metrcs
     iptables --insert nixos-fw-log-refuse --jump ACCEPT --source ${nodes.relay.config.networking.privateIPv4} -p tcp --dport 12789
+    # cardano
     iptables --insert nixos-fw-log-refuse --jump ACCEPT --source ${nodes.relay.config.networking.privateIPv4} -p tcp --dport 3001
   '';
 }

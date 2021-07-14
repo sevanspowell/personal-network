@@ -232,6 +232,8 @@ Bootstrap
 
 ** Packages
 #+BEGIN_SRC emacs-lisp
+  (global-diff-hl-mode)
+
   (use-package diminish
     :ensure t
     :init
@@ -352,9 +354,6 @@ Bootstrap
     (setq company-selection-wrap-around t)
     )
   (use-package flycheck
-   :ensure t
-  )
-  (use-package lsp-mode
    :ensure t
   )
   (use-package company-lsp
@@ -690,13 +689,36 @@ Load nix-managed emacs packages:
 
 ** Haskell
 #+BEGIN_SRC emacs-lisp
-  (use-package lsp-mode
-    :hook ((haskell-mode . lsp-deferred)
-           (lsp-mode . lsp-enable-which-key-integration))
-    :commands lsp)
-  (use-package lsp-ui :commands lsp-ui-mode)
   (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
   (use-package lsp-treemacs :commands lsp-treemacs-error-list)
+  (use-package lsp-haskell 
+    :after (haskell-mode lsp-mode)
+    :custom
+    (lsp-haskell-process-path-hie "haskell-language-server"))
+  (use-package lsp-ui 
+    :after lsp-mode
+    :commands lsp-ui-mode
+    :custom
+    (lsp-ui-peek-enable t)
+    (lsp-ui-peek-show-directory t)
+    (lsp-ui-doc-enable t)
+    (lsp-ui-doc-positon 'top)
+    (lsp-ui-imenu-window-width 20))
+  (use-package lsp-mode
+    :init
+      (setq lsp-keymap-prefix "M-l")
+    :hook ((haskell-mode . lsp-deferred)
+           (haskell-literate-mode . lsp-deferred)
+           (lsp-mode . lsp-enable-which-key-integration))
+    :config
+      (add-hook 'hack-local-variables-hook (lambda () (when lsp-mode (lsp))))
+    :custom
+      (lsp-lens-enable t)
+      (lsp-modeline-diagnostics-scope :workspace)
+      (lsp-file-watch-threshold 2000)
+
+    :commands lsp)
+  (use-package lsp-lens :delight)
 
   (use-package haskell-mode
     :ensure t
@@ -709,6 +731,10 @@ Load nix-managed emacs packages:
     (setq haskell-process-suggest-add-package t)
     (setq haskell-process-log t)
     (setq haskell-interactive-popup-errors nil)
+    (setq haskell-mode-hook '(haskell-indentation-mode))
+    (add-hook 'haskell-mode-hook 'lsp)
+    (add-hook 'haskell-mode-hook 'diff-hl-margin-mode)
+    (add-hook 'haskell-mode-hook 'display-fill-column-indicator-mode)
 
     ;; Load lsp-haskell when we activate haskell mode in a buffer
     ;; (add-hook 'haskell-mode-hook #'lsp-haskell-enable)
@@ -744,24 +770,6 @@ Load nix-managed emacs packages:
       )
     (setq tags-revert-without-query 1)
 
-    ;; (use-package dante
-    ;;   :ensure t
-    ;;   :after haskell-mode
-    ;;   :commands 'dante-mode
-    ;;   :init
-    ;;   (setq dante-methods '(new-build bare-ghci))
-    ;;   (setq dante-repl-command-line '("nix-shell" "--pure" "--run" (concat "cabal repl " (or dante-target (dante-package-name) "") " --builddir=dist/dante")))
-    ;;   (add-hook 'haskell-mode-hook 'flycheck-mode)
-    ;;   ;; OR:
-    ;;   ;; (add-hook 'haskell-mode-hook 'flymake-mode)
-    ;;   (add-hook 'haskell-mode-hook 'dante-mode)
-    ;;   (add-hook 'dante-mode-hook
-    ;;      '(lambda () (flycheck-add-next-checker 'haskell-dante
-    ;;                   '(warning . haskell-hlint))))
-    ;;   )
-
-    ;; (use-package nix-haskell-mode
-    ;;   :hook (haskell-mode . nix-haskell-mode))
 #+END_SRC
 
 ** Elisp
@@ -828,6 +836,10 @@ vterm:
     :ensure t
     :config
     (direnv-mode)
+    (setq direnv-always-show-summary nil)
+    :hook
+    (flycheck-before-syntax-check . direnv-update-environment)
+    (lsp-before-open-hook . direnv-update-environment)
   )
 #+END_SRC
 

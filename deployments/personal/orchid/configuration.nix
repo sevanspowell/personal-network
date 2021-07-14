@@ -6,7 +6,7 @@
 
 let
   sources = import ../nix/sources.nix;
-  cardano-cli = (import sources.cardano-node {}).cardano-cli;
+  # cardano-cli = (import sources.cardano-node {}).cardano-cli;
 
   zsa-udev-rules = pkgs.callPackage ./zsa-udev-rules.nix {};
 in
@@ -20,13 +20,13 @@ in
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ../nixos/modules/direnv.nix
-      ../nixos/modules/keybase.nix
+      # ../nixos/modules/keybase.nix
       # ../nixos/modules/yubikey.nix
       # ../../../../network/modules/yubikey-gpg/persist.nix
       ../../../../network/modules/yubikey-gpg
       "${sources.home-manager}/nixos"
-      "${sources.cardano-node}/nix/nixos"
-      "${sources.cardano-db-sync}/nix/nixos"
+      # "${sources.cardano-node}/nix/nixos"
+      # "${sources.cardano-db-sync}/nix/nixos"
     ];
 
 
@@ -63,13 +63,13 @@ in
 
   networking.hostName = "orchid"; # Define your hostname.
 
-  # hardware.keyboard.zsa.enable = true;
-  services.udev.packages = [ zsa-udev-rules ];
-  users.groups.plugdev = {};
+  # # hardware.keyboard.zsa.enable = true;
+  # services.udev.packages = [ zsa-udev-rules ];
+  # users.groups.plugdev = {};
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+  # # Configure network proxy if necessary
+  # # networking.proxy.default = "http://user:password@proxy:port/";
+  # # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Select internationalisation properties.
   console = {
@@ -87,7 +87,7 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = (with pkgs; [
-    cardano-cli
+    # cardano-cli
     cabal-install
     cabal2nix
     chromium
@@ -151,33 +151,30 @@ in
       -v /home/sam/Dropbox:/dbox/Dropbox \
       -v /home/sam/.dropbox:/dbox/.dropbox \
       -e DBOX_UID=1000 -e DBOX_GID=100 janeczku/dropbox"
-    alias work-vpn-up='sudo systemctl start openvpn-work-vpn.service'
-    alias work-vpn-down='sudo systemctl stop openvpn-work-vpn.service'
-    alias work-vpn-status='sudo systemctl status openvpn-work-vpn.service; echo ""; echo "/etc/resolv.conf:"; cat /etc/resolv.conf'
     alias ssh-iohk='ssh -F ~/.ssh/iohk.config'
   '';
 
-  # List services that you want to enable:
+  # # List services that you want to enable:
   services.sshd.enable = true;
 
-  # Enable the OpenSSH daemon.
+  # # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
-  services.cardano-node = {
-      environment = "testnet";
-      enable = true;
-      systemdSocketActivation = true;
-  };
-  services.cardano-db-sync = {
-    cluster = "testnet";
-    enable = true;
-    socketPath = "/run/cardano-node/node.socket";
-    user = "cardano-node";
-    extended = true;
-    postgres = {
-      database = "cexplorer";
-    };
-  };
+  # # services.cardano-node = {
+  # #     environment = "testnet";
+  # #     enable = true;
+  # #     systemdSocketActivation = true;
+  # # };
+  # # services.cardano-db-sync = {
+  # #   cluster = "testnet";
+  # #   enable = true;
+  # #   socketPath = "/run/cardano-node/node.socket";
+  # #   user = "cardano-node";
+  # #   extended = true;
+  # #   postgres = {
+  # #     database = "cexplorer";
+  # #   };
+  # # };
   services.postgresql = {
     enable = true;
     enableTCPIP = false;
@@ -240,11 +237,11 @@ in
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
-  # Enable CUPS to print documents.
+  # # Enable CUPS to print documents.
   services.printing.enable = true;
   services.printing.drivers = [ pkgs.hplip ];
 
-  # Enable sound.
+  # # Enable sound.
   sound.enable = true;
   hardware.pulseaudio.enable = true;
   hardware.pulseaudio.support32Bit = true;
@@ -281,18 +278,18 @@ in
   # Enable touchpad support.
   # services.xserver.libinput.enable = true;
 
-  # Enable the KDE Desktop Environment.
-  # services.xserver.displayManager.sddm.enable = true;
-  # services.xserver.desktopManager.plasma5.enable = true;
-  services.openvpn.servers = {
-    work-vpn = {
-      config = "config /home/sam/vpn/work-vpn/config.ovpn";
-      autoStart = false;
-      updateResolvConf = true;
-    };
-  };
+  # # Enable the KDE Desktop Environment.
+  # # services.xserver.displayManager.sddm.enable = true;
+  # # services.xserver.desktopManager.plasma5.enable = true;
+  # services.openvpn.servers = {
+  #   work-vpn = {
+  #     config = "config /home/sam/vpn/work-vpn/config.ovpn";
+  #     autoStart = false;
+  #     updateResolvConf = true;
+  #   };
+  # };
 
-  services.lorri.enable = true;
+  # services.lorri.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.extraUsers.sam = {
@@ -307,12 +304,12 @@ in
   virtualisation.virtualbox.host.enable = true;
   users.extraGroups.vboxusers.members = [ "sam" ];
 
-  nix.trustedUsers = ["root" "sam"];
-  nix.sandboxPaths = ["/home/sam/.ssh"];
-  nix.extraOptions = ''
-    # plugin-files = ${pkgs.nix-plugins}/lib/nix/plugins/libnix-extra-builtins.so
-    experimental-features = nix-command flakes ca-references
-  '';
+  # nix.trustedUsers = ["root" "sam"];
+  # nix.sandboxPaths = ["/home/sam/.ssh"];
+  # nix.extraOptions = ''
+  #   # plugin-files = ${pkgs.nix-plugins}/lib/nix/plugins/libnix-extra-builtins.so
+  #   experimental-features = nix-command flakes ca-references
+  # '';
 
   nix.binaryCaches = [
     "https://sevanspowell-personal.cachix.org"
@@ -331,36 +328,36 @@ in
 
   nixpkgs.config.allowUnfree = true;
 
-  # This value determines the NixOS release with which your system is to be
-  # compatible, in order to avoid breaking some software such as database
-  # servers. You should change this only after NixOS release notes say you
-  # should.
+  # # This value determines the NixOS release with which your system is to be
+  # # compatible, in order to avoid breaking some software such as database
+  # # servers. You should change this only after NixOS release notes say you
+  # # should.
   system.stateVersion = "18.09"; # Did you read the comment?
 
-  services.logind.extraConfig = ''
-    RuntimeDirectorySize=8G
-  '';
+  # services.logind.extraConfig = ''
+  #   RuntimeDirectorySize=8G
+  # '';
 
-  # networking.nat.internalInterfaces = "wg0";
-  networking.firewall = {
-    allowedUDPPorts = [ config.networking.wireguard.interfaces.wg0.listenPort ];
-  };
+  # # networking.nat.internalInterfaces = "wg0";
+  # networking.firewall = {
+  #   allowedUDPPorts = [ config.networking.wireguard.interfaces.wg0.listenPort ];
+  # };
 
-  networking.wireguard.interfaces = {
-    wg0 = {
-      ips = [ "10.0.0.1/24" ];
-      listenPort = 51820;
+  # networking.wireguard.interfaces = {
+  #   wg0 = {
+  #     ips = [ "10.0.0.1/24" ];
+  #     listenPort = 51820;
 
-      privateKeyFile = "/etc/wg0/private";
+  #     privateKeyFile = "/etc/wg0/private";
 
-      peers = [
-        { # EYD VM
-          publicKey = "7X0oyS0bWJDxbXpo1PqA4o5GPYJiKDxmLb9AsZriREU=";
-          allowedIPs = [ "10.0.0.2/32" ];
-          persistentKeepalive = 25;
-          endpoint = "192.168.56.224:51820";
-        }
-      ];
-    };
-  };
+  #     peers = [
+  #       { # EYD VM
+  #         publicKey = "7X0oyS0bWJDxbXpo1PqA4o5GPYJiKDxmLb9AsZriREU=";
+  #         allowedIPs = [ "10.0.0.2/32" ];
+  #         persistentKeepalive = 25;
+  #         endpoint = "192.168.56.224:51820";
+  #       }
+  #     ];
+  #   };
+  # };
 }

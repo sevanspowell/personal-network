@@ -31,12 +31,12 @@ in
 
   services.cardano-node = {
     enable = true;
-    environment = "ff";
+    environment = "shelley_testnet";
     hostAddr = "0.0.0.0";
     topology =  builtins.toFile "topology.json" (builtins.toJSON {
       Producers = [
         {
-          addr = "relays-new.ff.dev.cardano.org";
+          addr = "relays-new.shelley-testnet.dev.cardano.org";
           port = 3001;
           valency = 1;
         }
@@ -47,7 +47,7 @@ in
         }
       ];
     });
-    nodeConfig = config.services.cardano-node.environments.ff.nodeConfig // {
+    nodeConfig = config.services.cardano-node.environments.shelley_testnet.nodeConfig // {
       hasPrometheus = [ nodes.relay.config.networking.privateIPv4 12789 ];
       setupScribes = [{
         scKind = "JournalSK";

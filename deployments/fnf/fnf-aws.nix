@@ -1,4 +1,4 @@
-{ accessKeyId }:
+{ accessKeyId, maintenance ? true }:
 
 let
   region = "ap-southeast-2";
@@ -68,4 +68,47 @@ in
     description = "Allow prometheus";
     rules = [ { protocol = "tcp"; fromPort = 9090; toPort = 9090; sourceIp = "0.0.0.0/0"; } ];
   };
+
+  resources.ec2SecurityGroups.allow-grafana = {
+    inherit region accessKeyId;
+    name = "allow-grafana";
+    description = "Allow grafana";
+    rules = [ { protocol = "tcp"; fromPort = 3000; toPort = 3000; sourceIp = "0.0.0.0/0"; } ];
+  };
+
+  # resources.vpc.fnf = {
+  #   inherit region accessKeyId;
+  #   instanceTenancy = "default";
+  #   enableDnsSupport = true;
+  #   enableDnsHostnames = true;
+  #   cidrBlock = "10.0.0.0/16";
+  # };
+
+  # resources.vpcSubnets =
+  #   let
+  #     subnet = {cidr, zone}:
+  #       { resources, ... }:
+  #       {
+  #         inherit region zone accessKeyId;
+  #         vpcId = resources.vpc.fnf;
+  #         cidrBlock = cidr;
+  #         mapPublicIpOnLaunch = true;
+  #       };
+  #   in
+  #   {
+  #     subnet-a = subnet { cidr = "10.0.0.0/20"; zone = "ap-southeast-2a"; };
+  #     subnet-b = subnet { cidr = "10.0.16.0/20"; zone = "ap-southeast-2b"; };
+  #     subnet-c = subnet { cidr = "10.0.32.0/20"; zone = "ap-southeast-2c"; };
+  #   };
+
+  # resources.vpcRouteTables = {
+  #     route-table =
+  #       { resources, ... }:
+  #       {
+  #         inherit region accessKeyId;
+  #         vpcId = resources.vpc.fnf;
+  #       };
+  #   };
+
+  # TODO Setup Elastic IP
 }
