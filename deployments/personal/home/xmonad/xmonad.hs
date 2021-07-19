@@ -1,6 +1,8 @@
 import XMonad
 import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.DynamicProperty
 import XMonad.Hooks.ManageDocks
+import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.InsertPosition
 import XMonad.Util.Run (spawnPipe)
 import XMonad.Util.EZConfig (additionalKeys)
@@ -38,5 +40,11 @@ myConfig = def
     , terminal = "urxvt"
     , focusedBorderColor = foregroundColor
     , normalBorderColor = middleColor
-    , keys = myKeys 
+    , keys = myKeys
     }
+
+-- myConfig = def
+--     { handleEventHook = dynamicPropertyChange "WM_NAME" myDynHook <+> handleEventHook def
+--     }
+
+-- myDynHook = composeOne [ title =? "*scratch*" -?> doRectFloat (W.RationalRect 0.25 0.25 0.5 0.5) ]

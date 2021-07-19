@@ -244,7 +244,6 @@ Bootstrap
 
   (use-package avy     :ensure t
     :config
-      (setq ivy-initial-inputs-alist nil)
       (setq ivy-use-virtual-buffers t)
       (setq ivy-count-format "(%d/%d) ")
       (setq ivy-re-builders-alist
@@ -252,7 +251,11 @@ Bootstrap
     )
   (use-package general :ensure t)
   (use-package swiper :ensure t)
-  (use-package counsel :ensure t)
+  (use-package counsel
+    :ensure t
+    :config
+    (setq ivy-initial-inputs-alist nil)
+  )
   (use-package which-key :ensure t
     :config
     (which-key-mode 1)
@@ -492,6 +495,7 @@ Bootstrap
     "gb" 'magit-blame-addition
     "gff" 'magit-find-file
     "gfc" 'magit-file-checkout
+    "gdm" '((lambda () (interactive) (minibuffer-with-setup-hook (lambda () (insert "master...")) (call-interactively #'magit-diff-dwim))) :which-key "diff-branch-master")
 
     "ol" 'sort-lines
 
@@ -702,11 +706,12 @@ Load nix-managed emacs packages:
     (lsp-ui-peek-enable t)
     (lsp-ui-peek-show-directory t)
     (lsp-ui-doc-enable t)
-    (lsp-ui-doc-positon 'top)
+    (lsp-ui-doc-position 'top)
     (lsp-ui-imenu-window-width 20))
   (use-package lsp-mode
     :init
-      (setq lsp-keymap-prefix "M-l")
+      (setq lsp-keymap-prefix ",l")
+      ;; (evil-define-key '(normal motion) lsp-mode-map (kbd ",l") lsp-command-map)
     :hook ((haskell-mode . lsp-deferred)
            (haskell-literate-mode . lsp-deferred)
            (lsp-mode . lsp-enable-which-key-integration))
@@ -749,16 +754,14 @@ Load nix-managed emacs packages:
       "st" 'haskell-session-change-target
       "sr" 'haskell-process-restart
       "sb" 'haskell-process-load-file
-      "gi" 'haskell-navigate-imports
-      "gg" 'haskell-mode-tag-find
-      "gb" 'xref-pop-marker-stack
-      "gr" 'xref-find-references
-      "gc" 'haskell-cabal-visit-file
-      "ds" 'haskell-mode-toggle-scc-at-point
-      "hi" 'haskell-process-do-info
-      "ht" 'haskell-process-do-type
-      "hh" 'haskell-hoogle-lookup-from-local
-      "hs" 'haskell-menu
+      "gi" '(haskell-navigate-imports :which-key "goto imports")
+      "g"  '(:ignore t :which-key "goto")
+      "gd" '(lsp-find-definition :which-key "find definitions")
+      "gr" '(lsp-find-references :which-key "find references")
+      "ga" '(xref-find-apropos :which-key "find symbol in workspace")
+      "gc" '(haskell-cabal-visit-file :which-key "cabal file")
+      "hr" '((lambda () (interactive) (progn (kill-process "*emacs-local-hoogle*"))) :which-key "hoogle reload")
+      "l"  'lsp-command-map
      )
     (general-define-key
       :states '(normal motion)

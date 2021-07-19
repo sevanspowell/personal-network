@@ -43,7 +43,7 @@ in
     enable = true;
 
     users = {
-      sam.pinentryFlavor = "gnome3";
+      sam.pinentryFlavor = "gtk2";
       root.pinentryFlavor = "curses";
     };
   };
@@ -132,7 +132,6 @@ in
   (with pkgs.haskellPackages; [
     ghcid
     hasktags
-    hoogle
     xmobar
   ]) ++ [];
 
