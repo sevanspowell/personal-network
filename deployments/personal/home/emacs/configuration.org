@@ -431,7 +431,7 @@ Bootstrap
     "fed" '((lambda () (interactive) (find-file "~/code/devops/personal-network/deployments/personal/home/emacs/configuration.org")) :which-key "open-emacs-config")
     "fer" '((lambda () (interactive) (load-file "~/.emacs.d/init.el")) :which-key "reload-emacs-config")
     "fen" '((lambda () (interactive) (find-file "/sudo:root@localhost:/etc/nixos/configuration.nix")) :which-key "open-nix-config")
-    "fnr" '((lambda () (interactive) (let ((default-directory "/sudo::")) (async-shell-command "NIXOS_CONFIG=/home/sam/code/devops/personal-network/deployments/personal/orchid/configuration.nix nixos-rebuild switch --keep-failed" "*nixos-rebuild*"))) :which-key "reload-nix-config")
+    "nr" '((lambda () (interactive) (let ((default-directory "/sudo::")) (async-shell-command "NIXOS_CONFIG=/home/sam/code/devops/personal-network/deployments/personal/orchid/configuration.nix nixos-rebuild switch --keep-failed" "*nixos-rebuild*"))) :which-key "reload-nix-config")
     "fo"  '(:ignore t :which-key "organization")
     "foi" '((lambda () (interactive) (find-file "~/org/inbox.org")) :which-key "open-org-inbox")
     "fot" '((lambda () (interactive) (find-file "~/org/timesheets/tiny.org")) :which-key "open-org-timesheet")
@@ -702,7 +702,7 @@ Load nix-managed emacs packages:
     :after (haskell-mode lsp-mode)
     :ensure t
     :custom
-    (lsp-haskell-process-path-hie "haskell-language-server"))
+    (lsp-haskell-server-path "haskell-language-server"))
   (use-package lsp-ui
     :after lsp-mode
     :commands lsp-ui-mode
@@ -764,7 +764,7 @@ Load nix-managed emacs packages:
       "ga" '(xref-find-apropos :which-key "find symbol in workspace")
       "gc" '(haskell-cabal-visit-file :which-key "cabal file")
       "hr" '((lambda () (interactive) (progn (kill-process "*emacs-local-hoogle*"))) :which-key "hoogle reload")
-      "l"  'lsp-command-map
+      "l"  lsp-command-map
      )
     (general-define-key
       :states '(normal motion)
