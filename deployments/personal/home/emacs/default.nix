@@ -3,8 +3,10 @@
 let
   emacsOverlay = import (builtins.fetchTarball {url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;});
   emacsLocal = pkgs.emacsWithPackagesFromUsePackage {
-    config = builtins.readFile ./init.el;
+    config = ./configuration.org;
     extraEmacsPackages = epkgs: [ epkgs.vterm epkgs.emacsql-sqlite ];
+    alwaysEnsure = true;
+    alwaysTangle = true;
   };
 in
 
@@ -17,13 +19,15 @@ in
 
   programs.emacs = {
     enable = true;
-    package = emacsLocal.overrideAttrs (oldAttrs: {
-      buildCommand = oldAttrs.buildCommand + ''
-      # ln -s $emacs/share/emacs $out/share/emacs
-      '';
-    });
+    package = emacsLocal;
   };
 
   home.file.".emacs.d/init.el".source           = ./init.el;
   home.file.".emacs.d/configuration.org".source = ./configuration.org;
+  home.file.".emacs.d/configuration.el".source =
+    pkgs.runCommand "tangle-configuration"
+      { buildInputs = [ emacsLocal pkgs.coreutils ]; }
+      ''
+        emacs --batch --eval "(require 'org)" --eval '(org-babel-tangle-file "${./configuration.org}" (getenv "out"))'
+      '';
 }
