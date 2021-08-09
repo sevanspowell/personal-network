@@ -558,6 +558,7 @@ Disable menu, scroll bar:
  (setq sentence-end-double-space nil)
  ; Toggle wrapping text at the 80th character
  (setq default-fill-column 80)
+ (setq-default fill-column 80)
  (defalias 'yes-or-no-p 'y-or-n-p)
  (setq initial-scratch-message nil)
 #+END_SRC
