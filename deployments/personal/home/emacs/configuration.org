@@ -529,6 +529,17 @@ Disable menu, scroll bar:
   (setq-default word-wrap t)
 #+END_SRC
 
+Intelligently trim whitespace:
+#+BEGIN_SRC emacs-lisp
+  (use-package ws-butler
+    :ensure t
+    :config
+    (add-hook 'prog-mode-hook #'ws-butler-mode)
+  )
+
+(setq-default show-trailing-whitespace t)
+#+END_SRC
+
 *** Backups
 #+BEGIN_SRC emacs-lisp
   ; Use version control
